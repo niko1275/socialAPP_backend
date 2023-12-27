@@ -76,7 +76,7 @@ export const signup = async (req, res) => {
 
 
 export const perfil = async (req,res)=>{
-  const {usuario} = req;
-  res.json({usuario});
+  const {user} = req;
+  res.json({user});
   
 }
