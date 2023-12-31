@@ -31,11 +31,11 @@ const getPost = async (req, res) => {
 }
 
 const createPost = async (req, res) => {
-    const { title, message, creator, tags } = req.body;
-  
-    const newPostMessage = new PostMessage({ title, message, creator, tags })
+    const { title, message, creator, tags,userId } = req.body;
+    console.log(userId)
+    const newPostMessage = new PostMessage({ title, message, creator, tags,creatorId:userId })
     try {
-
+        console.log(req.files)
         if (req.files?.selectedFile) {
 
             const result = await uploadImage(req.files.selectedFile.tempFilePath);
@@ -65,11 +65,22 @@ const updatePost = async (req, res) => {
     
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
 
-    const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
+    
+    const updatedPost = { creator, title, message, tags, _id: id };
+  
+    if (req.files?.selectedFile) {
 
-    await PostMessage.findByIdAndUpdate(id, updatedPost, { new: true });
+      const result = await uploadImage(req.files.selectedFile.tempFilePath);
+      updatedPost.selectedFile ={ 
+          public_id:result.public_id,
+          secure_url:result.secure_url
+      }
+      fs.unlink(req.files.selectedFile.tempFilePath)
+    }
 
-    res.json(updatedPost);
+    const updatepost = await PostMessage.findByIdAndUpdate(id, updatedPost, { new: true });
+
+    res.json(updatepost);
 }
 
 const deletePost = async (req, res) => {

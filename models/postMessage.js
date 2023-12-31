@@ -5,6 +5,10 @@ const postSchema = mongoose.Schema({
     message: String,
     creator: String,
     tags: [String],
+    creatorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User', 
+    },
     selectedFile: {
         public_id:String,
         secure_url:String
